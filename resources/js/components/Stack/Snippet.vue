@@ -57,9 +57,10 @@ import LineNumber from '../Shared/LineNumber.vue';
 import editorUrl from '../Shared/editorUrl';
 
 export default {
-    inject: ['config'],
+    inject: ['config', 'report'],
 
     props: {
+        relative: { default: true },
         selectedFrame: { required: true },
         selectedRange: { default: [null, null] },
     },
@@ -96,8 +97,15 @@ export default {
             return lineNumber >= this.selectedRange[0] && lineNumber <= this.selectedRange[1];
         },
         editorUrl(lineNumber) {
-            return editorUrl(this.config.editor, this.selectedFrame.file, lineNumber);
+            return editorUrl(this.config.editor, this.path, lineNumber);
         },
     },
+    computed: {
+        path() {
+          return this.relative
+            ? this.selectedFrame.file.replace(this.report.application_path + '/', '')
+            : this.selectedFrame.file;
+        },
+    }
 };
 </script>
